@@ -1,0 +1,39 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+    padding: 20px;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+}
+
+input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: none;
+}
+
+input {
+    background: #1e293b;
+    color: white;
+}
+
+button {
+    background: #6366f1;
+    color: white;
+    cursor: pointer;
+}
+
+.link-box {
+    background: #1e293b;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    word-break: break-all;
+}

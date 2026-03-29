@@ -1,39 +1,39 @@
-const fill = document.getElementById("fill");
-const statusText = document.getElementById("status-text");
-const continueBtn = document.getElementById("continue-btn");
+const realLinkInput = document.getElementById("realLink");
+const generateBtn = document.getElementById("generateBtn");
+const shortLinkContainer = document.getElementById("shortLinkContainer");
+const historyEl = document.getElementById("history");
 
-// Pegar ID curto da URL
-const path = window.location.pathname.split("/");
-const shortID = path[path.length - 1];
+// Puxar histórico do localStorage
+let linksMap = JSON.parse(localStorage.getItem("linksMap") || "{}");
+updateHistory();
 
-// Buscar JSON do painel
-fetch("https://painel-links-iota.vercel.app/links.json")
-    .then(res => res.json())
-    .then(linksMap => {
-        const targetURL = linksMap[shortID];
-        if(!targetURL){
-            document.body.innerHTML = "<h2 style='text-align:center;margin-top:100px;'>Link inválido ou expirado.</h2>";
-            return;
-        }
+generateBtn.onclick = () => {
+    const realLink = realLinkInput.value.trim();
+    if(!realLink) return alert("Cole um link válido!");
 
-        // Contador animado
-        let progress = 0;
-        const timer = setInterval(() => {
-            progress += 10;
-            fill.style.width = progress + "%";
-            statusText.innerText = `Verificando sistema... ${progress}%`;
-            if(progress >= 100){
-                clearInterval(timer);
-                continueBtn.disabled = false;
-                continueBtn.innerText = "CONTINUAR PARA DOWNLOAD";
-            }
-        }, 500);
+    // Gerar ID curto aleatório
+    const shortID = Math.random().toString(36).substring(2,8).toUpperCase();
 
-        continueBtn.onclick = () => {
-            window.location.href = targetURL;
-        };
-    })
-    .catch(err => {
-        document.body.innerHTML = "<h2 style='text-align:center;margin-top:100px;'>Erro ao buscar link.</h2>";
-        console.error(err);
-    });
+    linksMap[shortID] = realLink;
+    localStorage.setItem("linksMap", JSON.stringify(linksMap));
+
+    // Atualizar JSON público (manual upload ou script para Vercel)
+    shortLinkContainer.innerHTML = `
+        Link curto pronto: 
+        <a href="https://apkbugadovip.vercel.app/lk/${shortID}" target="_blank">
+            https://apkbugadovip.vercel.app/lk/${shortID}
+        </a>
+    `;
+
+    updateHistory();
+    realLinkInput.value = "";
+};
+
+function updateHistory() {
+    historyEl.innerHTML = "";
+    for(const id in linksMap){
+        const li = document.createElement("li");
+        li.innerHTML = `${id} → ${linksMap[id]}`;
+        historyEl.appendChild(li);
+    }
+}

@@ -3,7 +3,7 @@ const generateBtn = document.getElementById("generateBtn");
 const shortLinkContainer = document.getElementById("shortLinkContainer");
 const historyEl = document.getElementById("history");
 
-// Puxar histórico do localStorage
+// Buscar links.json do painel (ou inicializar localmente)
 let linksMap = JSON.parse(localStorage.getItem("linksMap") || "{}");
 updateHistory();
 
@@ -17,6 +17,7 @@ generateBtn.onclick = () => {
     linksMap[shortID] = realLink;
     localStorage.setItem("linksMap", JSON.stringify(linksMap));
 
+    // Exibir link curto pronto
     shortLinkContainer.innerHTML = `
         Link curto pronto: 
         <a href="https://apkbugadovip.vercel.app/lk/${shortID}" target="_blank">
@@ -24,7 +25,10 @@ generateBtn.onclick = () => {
         </a>
     `;
 
+    // Atualizar histórico
     updateHistory();
+
+    // Reset input
     realLinkInput.value = "";
 };
 

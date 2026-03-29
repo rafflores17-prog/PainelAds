@@ -1,50 +1,39 @@
-const linkInput = document.getElementById("apk-link");
-const generateBtn = document.getElementById("generate-btn");
-const historyList = document.getElementById("history-list");
+const fill = document.getElementById("fill");
+const statusText = document.getElementById("status-text");
+const continueBtn = document.getElementById("continue-btn");
 
-// Recupera histórico do localStorage
-let linksMap = JSON.parse(localStorage.getItem("linksMap")) || {};
-updateHistory();
+// Pegar ID curto da URL
+const path = window.location.pathname.split("/");
+const shortID = path[path.length - 1];
 
-generateBtn.onclick = () => {
-    const originalLink = linkInput.value.trim();
-    if (!originalLink) return alert("Cole um link válido!");
+// Buscar JSON do painel
+fetch("https://painel-links-iota.vercel.app/links.json")
+    .then(res => res.json())
+    .then(linksMap => {
+        const targetURL = linksMap[shortID];
+        if(!targetURL){
+            document.body.innerHTML = "<h2 style='text-align:center;margin-top:100px;'>Link inválido ou expirado.</h2>";
+            return;
+        }
 
-    // Gerar ID curto aleatório
-    const shortID = generateID(6);
-    
-    // Salvar ID -> base64 do link real
-    linksMap[shortID] = btoa(originalLink);
-    localStorage.setItem("linksMap", JSON.stringify(linksMap));
+        // Contador animado
+        let progress = 0;
+        const timer = setInterval(() => {
+            progress += 10;
+            fill.style.width = progress + "%";
+            statusText.innerText = `Verificando sistema... ${progress}%`;
+            if(progress >= 100){
+                clearInterval(timer);
+                continueBtn.disabled = false;
+                continueBtn.innerText = "CONTINUAR PARA DOWNLOAD";
+            }
+        }, 500);
 
-    // Adicionar ao histórico
-    updateHistory();
-
-    // Mostrar link curto pronto para enviar
-    const shortLink = `${window.location.origin}/lk/${shortID}`;
-    alert(`Link curto gerado:\n${shortLink}`);
-    linkInput.value = "";
-};
-
-// Atualiza histórico na tela
-function updateHistory() {
-    historyList.innerHTML = "";
-    for (let id in linksMap) {
-        const li = document.createElement("li");
-        const shortLink = `${window.location.origin}/lk/${id}`;
-        li.textContent = `${shortLink} → ${atob(linksMap[id])}`;
-        historyList.appendChild(li);
-    }
-}
-
-// Gera ID aleatório de tamanho n (letras maiúsculas e números)
-function generateID(n) {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let result = "";
-    for (let i = 0; i < n; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    // Garantir que não repita IDs
-    if (linksMap[result]) return generateID(n);
-    return result;
-}
+        continueBtn.onclick = () => {
+            window.location.href = targetURL;
+        };
+    })
+    .catch(err => {
+        document.body.innerHTML = "<h2 style='text-align:center;margin-top:100px;'>Erro ao buscar link.</h2>";
+        console.error(err);
+    });

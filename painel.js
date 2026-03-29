@@ -1,42 +1,16 @@
-const realLinkInput = document.getElementById("realLink");
-const generateBtn = document.getElementById("generateBtn");
-const shortLinkContainer = document.getElementById("shortLinkContainer");
-const historyEl = document.getElementById("history");
+function gerarLinkCurto(urlReal) {
+    const id = Math.random().toString(36).substring(2,8).toUpperCase();
 
-// Buscar links.json do painel (ou inicializar localmente)
-let linksMap = JSON.parse(localStorage.getItem("linksMap") || "{}");
-updateHistory();
-
-generateBtn.onclick = () => {
-    const realLink = realLinkInput.value.trim();
-    if(!realLink) return alert("Cole um link válido!");
-
-    // Gerar ID curto aleatório
-    const shortID = Math.random().toString(36).substring(2,8).toUpperCase();
-
-    linksMap[shortID] = realLink;
-    localStorage.setItem("linksMap", JSON.stringify(linksMap));
-
-    // Exibir link curto pronto
-    shortLinkContainer.innerHTML = `
-        Link curto pronto: 
-        <a href="https://apkbugadovip.vercel.app/lk/${shortID}" target="_blank">
-            https://apkbugadovip.vercel.app/lk/${shortID}
-        </a>
-    `;
-
-    // Atualizar histórico
-    updateHistory();
-
-    // Reset input
-    realLinkInput.value = "";
-};
-
-function updateHistory() {
-    historyEl.innerHTML = "";
-    for(const id in linksMap){
-        const li = document.createElement("li");
-        li.innerHTML = `${id} → ${linksMap[id]}`;
-        historyEl.appendChild(li);
-    }
+    fetch('/api/links', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ id, url: urlReal })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            console.log('Link gerado:', id);
+            document.getElementById('resultado').innerText = `${window.location.origin}/lk/${id}`;
+        }
+    });
 }

@@ -17,7 +17,6 @@ generateBtn.onclick = () => {
     linksMap[shortID] = realLink;
     localStorage.setItem("linksMap", JSON.stringify(linksMap));
 
-    // Atualizar JSON público (manual upload ou script para Vercel)
     shortLinkContainer.innerHTML = `
         Link curto pronto: 
         <a href="https://apkbugadovip.vercel.app/lk/${shortID}" target="_blank">

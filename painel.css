@@ -1,72 +1,52 @@
 body {
     font-family: 'Roboto', sans-serif;
-    background: #0b0b0f;
+    background-color: #111;
     color: #fff;
-    margin: 0;
-    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .container {
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 20px;
-    background: #111;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.7);
-}
-
-h1, h2 {
+    width: 90%;
+    max-width: 450px;
     text-align: center;
-    color: #d4d4ff;
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.7);
 }
 
-.input-box {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-input[type="text"] {
-    flex: 1;
-    padding: 12px;
+.progress-bar {
+    width: 100%;
+    height: 15px;
+    background: #333;
     border-radius: 10px;
-    border: none;
-    font-size: 14px;
+    overflow: hidden;
+    margin: 20px 0;
 }
 
-.btn-purple {
-    padding: 12px 20px;
-    background: linear-gradient(90deg, #9b5de5, #7b2ff7);
-    border: none;
+.fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,#8b5cf6,#a78bfa);
+    transition: width 0.5s;
     border-radius: 10px;
-    font-weight: bold;
-    color: #fff;
-    cursor: pointer;
-    transition: 0.3s;
 }
 
-.btn-purple:hover {
-    transform: scale(1.05);
-}
-
-.history-box {
-    background: #1a1a2e;
-    padding: 15px;
+button {
+    padding: 15px 20px;
+    border: none;
     border-radius: 12px;
-    max-height: 300px;
-    overflow-y: auto;
+    background: #8b5cf6;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+    font-size: 16px;
 }
 
-.history-box ul {
-    list-style: none;
-    padding: 0;
-}
-
-.history-box li {
-    margin-bottom: 10px;
-    background: #222;
-    padding: 10px;
-    border-radius: 8px;
-    word-break: break-word;
-    font-size: 14px;
+button:disabled {
+    background: #555;
+    cursor: not-allowed;
 }

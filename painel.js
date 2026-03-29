@@ -1,41 +1,50 @@
-const gerarBtn = document.getElementById("gerar");
-const urlInput = document.getElementById("url");
-const resultado = document.getElementById("resultado");
-const listaDiv = document.getElementById("lista");
+const linkInput = document.getElementById("apk-link");
+const generateBtn = document.getElementById("generate-btn");
+const historyList = document.getElementById("history-list");
 
-// Carrega histórico do localStorage
-function render(){
-    let lista = JSON.parse(localStorage.getItem("links") || "[]");
-    listaDiv.innerHTML = "";
+// Recupera histórico do localStorage
+let linksMap = JSON.parse(localStorage.getItem("linksMap")) || {};
+updateHistory();
 
-    lista.forEach(item => {
-        let div = document.createElement("div");
-        div.className = "link-box";
-        div.innerHTML = `${item.link}<br><small>${item.data}</small>`;
-        listaDiv.appendChild(div);
-    });
+generateBtn.onclick = () => {
+    const originalLink = linkInput.value.trim();
+    if (!originalLink) return alert("Cole um link válido!");
+
+    // Gerar ID curto aleatório
+    const shortID = generateID(6);
+    
+    // Salvar ID -> base64 do link real
+    linksMap[shortID] = btoa(originalLink);
+    localStorage.setItem("linksMap", JSON.stringify(linksMap));
+
+    // Adicionar ao histórico
+    updateHistory();
+
+    // Mostrar link curto pronto para enviar
+    const shortLink = `${window.location.origin}/lk/${shortID}`;
+    alert(`Link curto gerado:\n${shortLink}`);
+    linkInput.value = "";
+};
+
+// Atualiza histórico na tela
+function updateHistory() {
+    historyList.innerHTML = "";
+    for (let id in linksMap) {
+        const li = document.createElement("li");
+        const shortLink = `${window.location.origin}/lk/${id}`;
+        li.textContent = `${shortLink} → ${atob(linksMap[id])}`;
+        historyList.appendChild(li);
+    }
 }
 
-function salvar(link){
-    let lista = JSON.parse(localStorage.getItem("links") || "[]");
-    lista.unshift({
-        link,
-        data: new Date().toLocaleString()
-    });
-    localStorage.setItem("links", JSON.stringify(lista));
-    render();
+// Gera ID aleatório de tamanho n (letras maiúsculas e números)
+function generateID(n) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "";
+    for (let i = 0; i < n; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    // Garantir que não repita IDs
+    if (linksMap[result]) return generateID(n);
+    return result;
 }
-
-// Gera link base64
-gerarBtn.onclick = () => {
-    let url = urlInput.value.trim();
-    if(!url) return alert("Cole um link!");
-
-    let encoded = btoa(url);
-    let final = `${window.location.origin}/?d=${encoded}`;
-    resultado.innerHTML = `<div class="link-box">${final}</div>`;
-
-    salvar(final);
-}
-
-render();
